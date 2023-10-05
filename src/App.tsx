@@ -1,59 +1,51 @@
 import { useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
+import { Page, getPageOffset, getPageWidth, getPages } from './assets/NavPage'
 import './App.css'
-
-type Page = {
-  name: string,
-  width: number,
-  offset: number
-}
 
 function App() {
 
-  const pages : Page[] = [
-    {
-      name: "Home",
-      width: 3.3,
-      offset: 0.4
-    },{
-      name: "About",
-      width: 3.6,
-      offset: 4.4
-    },{
-      name: "Projects",
-      width: 4.9,
-      offset: 8.8
-    },{
-      name: "Contact",
-      width: 4.6,
-      offset: 14.4
-    }
-  ]
-
-  const [active, setActive] = useState(pages[0].name)
+  const pages = getPages()
+  const [active, setActive] = useState(pages.get(1).id)
   const [theme, setTheme] = useState('dark')
 
-  function changePage(page: Page) {
-    const nav : HTMLDivElement | null = document.querySelector('.nav')
-    setActive(page.name)
-    nav?.style.setProperty('--nav-item-active-width', 
-      (page.width).toString().concat('vw'))
-    nav?.style.setProperty('--nav-item-active-offset', 
-      (page.offset).toString().concat('vw'))
+  window.onload = () => { document.body.style.transitionDuration = '3s' }
+  window.onresize = () => { updateActive(active) }
+
+  function updateActive(pageId: number) {
+    const nav : HTMLDivElement = document.querySelector('.nav') as HTMLDivElement
+    const newWidth = getPageWidth(window.innerWidth, pageId)
+    const newOffset = getPageOffset(window.innerWidth, pageId)
+    nav.style.setProperty('--nav-item-active-width', 
+      (newWidth).toString().concat('rem'))
+    nav.style.setProperty('--nav-item-active-offset', 
+      (newOffset).toString().concat('rem'))
   }
 
-  function changeTheme(theme: string) {
-    setTheme(theme)
-    switch(theme) {
+  function changePage(page: Page) {
+    setActive(page.id)
+    updateActive(page.id)
+  }
+
+  function changeTheme(newTheme: string) {
+    setTheme(newTheme)
+    const lightIcon : HTMLImageElement = document.querySelector('.theme-icon:nth-child(1)') as HTMLImageElement 
+    const darkIcon : HTMLImageElement = document.querySelector('.theme-icon:nth-child(2)') as HTMLImageElement
+    switch(newTheme) {
       case 'light':
-        document.body.style.setProperty('--bg-color', 'rgb(233,233,233)')
-        document.body.style.setProperty('--nav-item-color', 'rgb(136, 133, 133)')
-        document.body.style.setProperty('--nav-item-hover-color', 'rgb(96, 96, 96)')
-        document.body.style.setProperty('--nav-item-active-bg', 'rgba(112, 108, 108, 0.4)')
+        lightIcon.style.marginLeft = '-6rem'
+        darkIcon.style.marginLeft = '0rem'
+        document.body.style.setProperty('--bg-color', '#FFFFFF')
+        document.body.style.setProperty('--nav-item-hover-color', 'black')
+        document.body.style.setProperty('--nav-bg-color', 'rgba(219, 219, 219, 0.4)')
+        document.body.style.setProperty('--nav-item-active-bg', 'rgba(112, 108, 108, 0.1)')
         break
       case 'dark':
+        lightIcon.style.marginLeft = '0rem'
+        darkIcon.style.marginLeft = '6rem'
         document.body.style.setProperty('--bg-color', '#202020')
-        document.body.style.setProperty('--nav-item-color', 'rgb(136, 133, 133)')
         document.body.style.setProperty('--nav-item-hover-color', 'white')
+        document.body.style.setProperty('--nav-bg-color', 'rgba(60, 60, 60, 0.2)')
         document.body.style.setProperty('--nav-item-active-bg', 'rgba(112, 108, 108, 0.2)')
         break
     }
@@ -63,20 +55,24 @@ function App() {
     <>
       <section className='nav-container'>
         <div className='nav'>
-          {pages.map((page, index) => {
+          {Array.from(pages.values()).map((page) => {
             return <button
-              className={page.name === active ? 'nav-item active' : 'nav-item'}
-              key={index}
-              tabIndex={index+1}
+              className={page.id === active ? 'nav-item active' : 'nav-item'}
+              key={page.id}
+              tabIndex={page.id}
               onClick={() => changePage(page)}>{page.name}</button>
           })}
         </div>
-        <div 
+        <button 
             className='color-theme'
             onClick={() => changeTheme(theme === 'dark' ? 'light' : 'dark')}
-            tabIndex={pages.length + 1}
-          >Ooo</div>
+            tabIndex={pages.size + 1}
+        >
+          <img className='theme-icon' src='light_icon.png' />
+          <img className='theme-icon' src='dark_icon.png' />
+        </button>
       </section>
+      <Toaster />
     </>
   )
 }

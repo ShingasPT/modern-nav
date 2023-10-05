@@ -1,13 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
 
 :root {
-  --nav-item-active-bg: rgba(112, 108, 108, 0.2);
-  --nav-anim-delay: 750ms;
-  --nav-item-active-width: 3.3vw;
-  --nav-item-active-offset: 0.4vw;
   --bg-color: #202020;
+  --nav-bg-color: rgba(60, 60, 60, 0.2);
+  --nav-item-active-bg: rgba(112, 108, 108, 0.2);
   --nav-item-color: rgb(136, 133, 133);
   --nav-item-hover-color: white;
+  --nav-item-active-width: 4rem;
+  --nav-item-active-offset: 0.4rem;
+  --nav-anim-delay: 1s;
 }
 
 * {
@@ -17,7 +18,8 @@
 }
 
 body {
-  background-color: var(--bg-color)
+  background-color: var(--bg-color);
+  transition: background-color;
 }
 
 .nav-container {
@@ -26,6 +28,7 @@ body {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin-top: 3vh;
 }
 
 .nav {
@@ -33,21 +36,36 @@ body {
   display: flex;
   align-items: center;
   height: 85%;
-  margin-top: 3vh;
   border-radius: 15px;
-  background-color: rgba(61, 60, 60, 0.2);
+  background-color: var(--nav-bg-color);
   transition: width var(--nav-anim-delay) ease;
 }
 
 .color-theme {
   padding: 0 12px;
   margin-left: 1em;
+  position: relative;
+  overflow: hidden;
   display: flex;
+  justify-content: center;
   align-items: center;
   height: 85%;
-  margin-top: 3vh;
+  width: 50px;
+  border: none;
   border-radius: 15px;
-  background-color: rgba(61, 60, 60, 0.2);
+  background-color: var(--nav-bg-color);
+  transition: var(--nav-anim-delay);
+}
+
+.theme-icon {
+  position: absolute;
+  padding: 0 10px;
+  transition: margin-left var(--nav-anim-delay);
+  width: 95%;
+}
+
+.theme-icon:nth-child(2) {
+  margin-left: 6rem;
 }
 
 .color-theme:hover { cursor: pointer; }
@@ -67,7 +85,7 @@ body {
 
 .nav-item:hover:not(.active) {
   color: var(--nav-item-hover-color);
-  opacity: 0.5;
+  opacity: 0.8;
   cursor: pointer;
   scale: 1.05;
 }
@@ -85,11 +103,20 @@ body {
   width: var(--nav-item-active-width);
   height: 2.25rem;
   background-color: var(--nav-item-active-bg);
-  transition-property: transform, width;
-  transition-duration: 1s, 1.25s;
+  transition: var(--nav-anim-delay);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
+  :root {
+    --nav-item-active-width: 3.1rem;
+    --nav-item-active-offset: 0.4rem;
+  }
+  .nav, .color-theme { height: 75%; }
+  .color-theme { 
+    width: 45px;
+  }
+  .theme-icon { width: 90%; }
+  .nav::before { height: 1.75rem; }
   .nav-item {
     font-size: 8pt;
     padding: 0 10px;

@@ -1,2 +1,0 @@
-Add Dark/Light Theme Icons
-Fix Light Theme Color Pallete
